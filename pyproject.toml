@@ -30,6 +30,7 @@ uvicorn = "^0.32.0"
 python-multipart = "^0.0.17"
 loguru = "^0.7.2"
 fastapi-cors = "^0.0.6"
+gdown = "^5.2.0"
 
 
 [build-system]

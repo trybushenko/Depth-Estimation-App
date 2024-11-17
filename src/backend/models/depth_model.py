@@ -1,3 +1,4 @@
+import os
 import torch
 import numpy as np
 
@@ -5,18 +6,17 @@ from pathlib import Path
 from PIL import Image
 from loguru import logger
 
-from depth_estimation.depth_anything_v2.dpt import DepthAnythingV2
-
+from src.depth_estimation.depth_anything_v2.dpt import DepthAnythingV2
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 logger.info(f"Using device: {device}")
 
 # Adjust the root path as necessary
-root_path = Path(__file__).resolve().parents[3]
+# root_path = Path(__file__).resolve().parents[3]
 weights_path_dict = {
-    'vits': root_path / 'tmp/2024-11-16-depth-anything-weights/depth-anything-v2/vits/depth_anything_v2_vits.pth',
-    'vitb': root_path / 'tmp/2024-11-16-depth-anything-weights/depth-anything-v2/vitb/depth_anything_v2_vitb.pth',
-    'vitl': root_path / 'tmp/2024-11-16-depth-anything-weights/depth-anything-v2/vitl/depth_anything_v2_vitl.pth',
+    'vits': Path(os.getcwd()) / 'tmp/model-weights/depth_anything_v2_vits.pth',
+    'vitb': Path(os.getcwd()) / 'tmp/model-weights/depth_anything_v2_vitb.pth',
+    'vitl': Path(os.getcwd()) / 'tmp/model-weights/depth_anything_v2_vitl.pth',
 }
 
 model_configs = {

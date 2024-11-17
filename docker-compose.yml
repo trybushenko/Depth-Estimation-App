@@ -1,0 +1,44 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: src/backend/Dockerfile
+    container_name: depth_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./model-weights:/app/tmp/model-weights
+      # Add this volume to access NVIDIA utilities
+      - /usr/bin/nvidia-smi:/usr/bin/nvidia-smi
+      - /usr/lib/x86_64-linux-gnu/libnvidia-ml.so.1:/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu, utility]  # Added utility capability
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    runtime: nvidia
+    networks:
+      - depth_network
+
+  frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile
+    container_name: depth_frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"  # Nginx serves on port 80 inside the container
+    depends_on:
+      - backend
+    networks:
+      - depth_network
+
+networks:
+  depth_network:
+    driver: bridge
