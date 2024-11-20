@@ -8,21 +8,16 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./model-weights:/app/tmp/model-weights
-      # Add this volume to access NVIDIA utilities
-      - /usr/bin/nvidia-smi:/usr/bin/nvidia-smi
-      - /usr/lib/x86_64-linux-gnu/libnvidia-ml.so.1:/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.1
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu, utility]  # Added utility capability
+      - ./tmp/model-weights:/app/tmp/model-weights
     environment:
-      - NVIDIA_VISIBLE_DEVICES=0
-      - NVIDIA_DRIVER_CAPABILITIES=all
-    runtime: nvidia
+      - NVIDIA_VISIBLE_DEVICES=all
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [ gpu ]
     networks:
       - depth_network
 

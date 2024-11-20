@@ -25,8 +25,11 @@ RUN rm -rf /usr/share/nginx/html/*
 # 8. Copy Built Files from Build Stage
 COPY --from=build /app/build /usr/share/nginx/html
 
-# 9. Expose Port
+# 9. Copy Custom Nginx Configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# 10. Expose Port
 EXPOSE 80
 
-# 10. Start Nginx
+# 11. Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
