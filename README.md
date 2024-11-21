@@ -90,7 +90,7 @@ Before running the project, ensure you have the following installed on your syst
 Navigate to your desired directory and clone the project repository:
 ```bash
 git clone https://github.com/trybushenko/Depth-Estimation-App.git
-cd depth_estimation
+cd Depth-Estimation-App
 ```
 
 ### 2. Build and Run Docker Containers
