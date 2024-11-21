@@ -79,8 +79,8 @@ depth-estimation/
 ## Prerequisites
 Before running the project, ensure you have the following installed on your system:
 
-- Docker: Version 27.3.1
-- [Nvidia Container Toolkit](https://github.com/NVIDIA/nvidia-container-toolkit): Version 1.17.2
+- Docker: Version [27.3.1](https://docs.docker.com/engine/release-notes/27/#2731)
+- Nvidia Container Toolkit: Version [1.17.2](https://github.com/NVIDIA/nvidia-container-toolkit/releases)
 - Git: For cloning the repository
 - Bash: For running the provided scripts
 
