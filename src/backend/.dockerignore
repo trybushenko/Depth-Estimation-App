@@ -1,8 +1,14 @@
-# .dockerignore
+# depth-estimation/.dockerignore
+
+# Exclude frontend-related files
 src/frontend/
-**/node_modules/
-**/__pycache__/
+src/**/node_modules/
+src/**/__pycache__/
+
+# Exclude development and version control files
 .git
 .gitignore
 .env
 *.pyc
+notebooks/
+tmp/

@@ -1,39 +1,28 @@
+version: '3.8'
+
 services:
   backend:
     build:
       context: .
       dockerfile: src/backend/Dockerfile
-    container_name: depth_backend
-    restart: unless-stopped
+    image: depth_estimation:v1.0
+    container_name: backend
     ports:
       - "8000:8000"
-    volumes:
-      - ./tmp/model-weights:/app/tmp/model-weights
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=all
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           count: 1
-    #           capabilities: [ gpu ]
     networks:
-      - depth_network
+      - app-network
 
   frontend:
     build:
-      context: ./src/frontend
+      context: src/frontend
       dockerfile: Dockerfile
-    container_name: depth_frontend
-    restart: unless-stopped
+    image: depth_estimation_frontend:v1.0
+    container_name: frontend
     ports:
-      - "8080:80"  # Nginx serves on port 80 inside the container
-    depends_on:
-      - backend
+      - "8080:80"
     networks:
-      - depth_network
+      - app-network
 
 networks:
-  depth_network:
+  app-network:
     driver: bridge

@@ -29,13 +29,15 @@ WORKDIR /app
 
 # 6. Copy pyproject.toml and poetry.lock first (for caching)
 COPY pyproject.toml poetry.lock* /app/
+COPY src/backend /app/src/backend
+COPY src/depth_estimation /app/src/depth_estimation
 
 # 7. Install Dependencies
 RUN poetry config virtualenvs.create false && \
     poetry install --no-dev --no-interaction --no-ansi
 
 # 8. Copy the entire src directory
-COPY src /app/src/
+# COPY src /app/src/
 
 # 9. Create an entrypoint script
 COPY entrypoint.sh /app/
