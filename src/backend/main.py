@@ -1,20 +1,22 @@
 # src/backend/api/main.py
 
-from fastapi import FastAPI, File, UploadFile, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from io import BytesIO
-from PIL import Image
-import numpy as np
 import base64
 import logging
+from io import BytesIO
+
+import numpy as np
 import torch
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from PIL import Image
+from pydantic import BaseModel
 
 from src.backend.models.depth_model import predict_depth
 
 
 class ImageBase64(BaseModel):
     image: str  # Base64-encoded image string
+
 
 app = FastAPI(title="Depth Estimation API")
 
@@ -40,8 +42,9 @@ ALLOWED_MIME_TYPES = [
     "image/gif",
     "image/bmp",
     "image/tiff",
-    "image/webp"
+    "image/webp",
 ]
+
 
 @app.post("/predict")
 async def predict_depth_map(
@@ -55,9 +58,9 @@ async def predict_depth_map(
     """
 
     # Check the content type
-    content_type = request.headers.get('Content-Type', '')
+    content_type = request.headers.get("Content-Type", "")
 
-    if 'multipart/form-data' in content_type:
+    if "multipart/form-data" in content_type:
         # Handle file upload
         if not file:
             raise HTTPException(status_code=400, detail="No file provided")
@@ -66,11 +69,11 @@ async def predict_depth_map(
             raise HTTPException(status_code=400, detail="Unsupported file type")
         # Read image bytes
         image_bytes = await file.read()
-    elif 'application/json' in content_type:
+    elif "application/json" in content_type:
         # Handle base64-encoded image
         try:
             data = await request.json()
-            image_base64 = data.get('image')
+            image_base64 = data.get("image")
             if not image_base64:
                 raise HTTPException(status_code=400, detail="No image provided in JSON")
             # Decode base64 image
@@ -103,17 +106,17 @@ async def predict_depth_map(
         else:
             depth_map_normalized = depth_map  # Avoid division by zero
 
-        depth_map_uint8 = (depth_map_normalized * 255).astype('uint8')
+        depth_map_uint8 = (depth_map_normalized * 255).astype("uint8")
 
         # Remove singleton dimensions if any
         depth_map_uint8 = np.squeeze(depth_map_uint8)
 
         # Determine the image mode based on array dimensions
         if depth_map_uint8.ndim == 2:
-            mode = 'L'  # Grayscale
+            mode = "L"  # Grayscale
         elif depth_map_uint8.ndim == 3 and depth_map_uint8.shape[0] == 3:
             depth_map_uint8 = depth_map_uint8.transpose(1, 2, 0)  # Convert to (H, W, C)
-            mode = 'RGB'
+            mode = "RGB"
         else:
             raise ValueError(f"Unsupported depth_map shape: {depth_map_uint8.shape}")
 
@@ -123,7 +126,7 @@ async def predict_depth_map(
         # Save the image to a buffer
         buffered = BytesIO()
         depth_image.save(buffered, format="PNG")
-        depth_map_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
+        depth_map_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
         logging.info("Depth map encoded successfully")
     except Exception as e:
         logging.error(f"Error encoding depth map: {e}")

@@ -31,6 +31,8 @@ python-multipart = "^0.0.17"
 loguru = "^0.7.2"
 fastapi-cors = "^0.0.6"
 gdown = "^5.2.0"
+isort = "^5.13.2"
+black = "^24.10.0"
 
 
 [build-system]
