@@ -3,6 +3,7 @@
 import base64
 import logging
 from io import BytesIO
+import cv2
 
 import numpy as np
 import torch
@@ -94,34 +95,16 @@ async def predict_depth_map(
     # Predict the depth map by passing the file-like object
     try:
         depth_map = predict_depth(image_bytes_io)
+
     except Exception as e:
         logging.error(f"Error in depth prediction: {e}")
         raise HTTPException(status_code=500, detail="Depth prediction failed")
 
     # Convert depth map to base64-encoded PNG image
     try:
-        # Normalize the depth map to range [0, 255]
-        if np.max(depth_map) != 0:
-            depth_map_normalized = depth_map / np.max(depth_map)
-        else:
-            depth_map_normalized = depth_map  # Avoid division by zero
+        
+        depth_image = Image.fromarray(depth_map, mode='RGB')
 
-        depth_map_uint8 = (depth_map_normalized * 255).astype("uint8")
-
-        # Remove singleton dimensions if any
-        depth_map_uint8 = np.squeeze(depth_map_uint8)
-
-        # Determine the image mode based on array dimensions
-        if depth_map_uint8.ndim == 2:
-            mode = "L"  # Grayscale
-        elif depth_map_uint8.ndim == 3 and depth_map_uint8.shape[0] == 3:
-            depth_map_uint8 = depth_map_uint8.transpose(1, 2, 0)  # Convert to (H, W, C)
-            mode = "RGB"
-        else:
-            raise ValueError(f"Unsupported depth_map shape: {depth_map_uint8.shape}")
-
-        # Convert the NumPy array to a PIL Image
-        depth_image = Image.fromarray(depth_map_uint8, mode=mode)
 
         # Save the image to a buffer
         buffered = BytesIO()

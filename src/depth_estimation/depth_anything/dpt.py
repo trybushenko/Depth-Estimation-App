@@ -21,20 +21,6 @@ def _make_fusion_block(features, use_bn, size=None):
     )
 
 
-class ConvBlock(nn.Module):
-    def __init__(self, in_feature, out_feature):
-        super().__init__()
-
-        self.conv_block = nn.Sequential(
-            nn.Conv2d(in_feature, out_feature, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(out_feature),
-            nn.ReLU(True),
-        )
-
-    def forward(self, x):
-        return self.conv_block(x)
-
-
 class DPTHead(nn.Module):
     def __init__(
         self,
@@ -170,7 +156,7 @@ class DPTHead(nn.Module):
         return out
 
 
-class DepthAnythingV2(nn.Module):
+class DepthAnything(nn.Module):
     def __init__(
         self,
         encoder="vitl",
@@ -179,7 +165,7 @@ class DepthAnythingV2(nn.Module):
         use_bn=False,
         use_clstoken=False,
     ):
-        super(DepthAnythingV2, self).__init__()
+        super(DepthAnything, self).__init__()
 
         self.intermediate_layer_idx = {
             "vits": [2, 5, 8, 11],
