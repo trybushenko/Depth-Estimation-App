@@ -1,11 +1,10 @@
-// src/components/CameraStreamPage.tsx
-
-import React from 'react';
+// src/frontend/pages/CameraStreamPage.tsx
 import styled from 'styled-components';
-import CameraStream from './CameraStream';
-import DepthMapDisplay from './DepthMapDisplay'; // Ensure this component exists
-import { useDepthPrediction } from '../hooks/useDepthPrediction'; // Correct import
+import React from 'react';
+import CameraStream from '../components/CameraStream';
+import { useDepthPrediction } from '../hooks/useDepthPrediction';
 import ErrorMessage from './ErrorMessage'; // Ensure this component exists
+import DepthMapDisplay from './DepthMapDisplay'; // Ensure this component exists
 
 const PageContainer = styled.div`
   max-width: 1000px;
@@ -21,19 +20,14 @@ const Title = styled.h1`
 `;
 
 const CameraStreamPage: React.FC = () => {
-  const {
-    predictDepthFromBase64,
-    depthMap,
-    loading,
-    error,
-  } = useDepthPrediction();
+  const { predictDepthFromFile, depthMap, loading, error } = useDepthPrediction();
 
   return (
     <PageContainer>
       <Title>Real-Time Camera Stream for Depth Prediction</Title>
       
       <CameraStream
-        predictDepthFromBase64={predictDepthFromBase64}
+        predictDepthFromFile={predictDepthFromFile}
         loading={loading}
         error={error}
       />

@@ -1,9 +1,8 @@
-// src/components/CameraStream.tsx
+// src/frontend/components/CameraStream.tsx
 
 import React, { useRef, useEffect, useCallback } from 'react';
 import Webcam from 'react-webcam';
 import styled from 'styled-components';
-// import LoadingSpinner from './LoadingSpinner';
 import ErrorMessage from './ErrorMessage';
 
 const WebcamContainer = styled.div`
@@ -20,31 +19,44 @@ const WebcamStyled = styled(Webcam)`
 `;
 
 interface CameraStreamProps {
-  predictDepthFromBase64: (base64Image: string) => Promise<void>;
+  predictDepthFromFile: (file: File) => Promise<void>;
   loading: boolean;
   error: string | null;
 }
 
-const CaptureInterval = 100; // Capture every 2000ms (2 seconds)
+const CaptureInterval = 100; // Capture every 1000ms (1 second)
 
 const CameraStream: React.FC<CameraStreamProps> = ({
-  predictDepthFromBase64,
+  predictDepthFromFile,
   loading,
   error,
 }) => {
   const webcamRef = useRef<Webcam>(null);
+
+  // Function to convert base64 to Blob
+  const base64ToBlob = (base64: string, mime: string) => {
+    const byteCharacters = atob(base64);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: mime });
+  };
 
   // Function to capture the current frame from the webcam
   const capture = useCallback(() => {
     if (webcamRef.current) {
       const imageSrc = webcamRef.current.getScreenshot();
       if (imageSrc) {
-        // Remove the data URL prefix to get the base64 string
-        const base64Image = imageSrc.split(',')[1];
-        predictDepthFromBase64(base64Image);
+        const [header, base64Image] = imageSrc.split(',');
+        const mime = header.match(/:(.*?);/)?.[1] || 'image/png';
+        const imageBlob = base64ToBlob(base64Image, mime);
+        const imageFile = new File([imageBlob], 'captured_image.png', { type: mime });
+        predictDepthFromFile(imageFile);
       }
     }
-  }, [predictDepthFromBase64]);
+  }, [predictDepthFromFile]);
 
   // Capture a frame at regular intervals
   useEffect(() => {
@@ -70,6 +82,7 @@ const CameraStream: React.FC<CameraStreamProps> = ({
         />
       </WebcamContainer>
 
+      {/* Uncomment and implement LoadingSpinner if needed */}
       {/* {loading && <LoadingSpinner loading={loading} />} */}
 
       {error && <ErrorMessage>{error}</ErrorMessage>}
