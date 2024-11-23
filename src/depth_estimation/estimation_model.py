@@ -1,14 +1,9 @@
 import torch
-import torch.nn.functional as F
 import numpy as np
 import cv2
 import re
 from pathlib import Path
 from typing import List
-
-from torchvision.transforms import Compose
-
-from src.depth_estimation.depth_anything.util.transform import Resize, NormalizeImage, PrepareForNet
 
 
 from src.depth_estimation.depth_anything.dpt import DepthAnything
@@ -37,19 +32,6 @@ class DepthModel:
         self.total_params = sum(p.numel() for p in self.model.parameters()) / 1e6  # In millions
 
         self.grayscale = grayscale
-
-        self.transform = Compose([
-            Resize(width=518,
-                    height=518,
-                    resize_target=False,
-                    keep_aspect_ratio=True,
-                    ensure_multiple_of=14,
-                    resize_method='lower_bound',
-                    image_interpolation_method=cv2.INTER_CUBIC,
-                ),
-            NormalizeImage(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-            PrepareForNet(),
-        ])
 
     def _get_version(self):
         match = re.search(r'v(1|2)', self.model_name.lower())

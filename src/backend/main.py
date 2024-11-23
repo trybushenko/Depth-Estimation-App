@@ -85,16 +85,9 @@ async def predict_depth_map(
     else:
         raise HTTPException(status_code=415, detail="Unsupported Media Type")
 
-    try:
-        # Create a BytesIO object from image bytes
-        image_bytes_io = BytesIO(image_bytes)
-    except Exception as e:
-        logging.error(f"Error processing image bytes: {e}")
-        raise HTTPException(status_code=400, detail="Invalid image data")
-
     # Predict the depth map by passing the file-like object
     try:
-        depth_map = predict_depth(image_bytes_io)
+        depth_map = predict_depth(image_bytes)
 
     except Exception as e:
         logging.error(f"Error in depth prediction: {e}")
@@ -104,7 +97,6 @@ async def predict_depth_map(
     try:
         
         depth_image = Image.fromarray(depth_map, mode='RGB')
-
 
         # Save the image to a buffer
         buffered = BytesIO()

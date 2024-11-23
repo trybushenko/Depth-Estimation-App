@@ -21,20 +21,6 @@ class DepthDataset(Dataset):
             self.image_list.extend(Path(self.image_path).glob('*.png'))
             self.image_list.extend(Path(self.image_path).glob('*.jpg'))
             self.image_list.extend(Path(self.image_path).glob('*.jpeg'))
-        
-        if self.transform is None:
-            self.transform = Compose([
-                Resize(width=518,
-                       height=518,
-                       resize_target=False,
-                       keep_aspect_ratio=True,
-                       ensure_multiple_of=14,
-                       resize_method='lower_bound',
-                       image_interpolation_method=cv2.INTER_CUBIC,
-                    ),
-                NormalizeImage(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-                PrepareForNet(),
-            ])
 
     def __len__(self):
         return len(self.image_paths)
@@ -43,10 +29,5 @@ class DepthDataset(Dataset):
         image_path = self.image_list[idx]
 
         image = cv2.imread(str(image_path))
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) / 255.0
-
-        if self.transform:
-            image = self.transform({'image': image})
-            image = image['image']
 
         return image

@@ -1,3 +1,4 @@
+import cv2
 import os
 from pathlib import Path
 
@@ -46,9 +47,10 @@ model = DepthModel('v2_vits',
 def predict_depth(image_bytes_io):
     try:
 
-        image = Image.open(image_bytes_io).convert("RGB")
+        img_array = np.frombuffer(image_bytes_io, dtype=np.uint8)
+        image = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
 
-        prediction = model.infer([np.array(image)])[0]
+        prediction = model.infer([image])[0]
 
         # Log prediction details
         logger.info(f"Depth map shape: {prediction.shape}")
