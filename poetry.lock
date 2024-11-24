@@ -2342,6 +2342,23 @@ dev = ["black", "check-manifest", "coverage", "packaging", "pylint", "pyperf", "
 test = ["pytest", "pytest-xdist", "setuptools"]
 
 [[package]]
+name = "ptflops"
+version = "0.7.4"
+description = "Flops counter for neural networks in pytorch framework"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "ptflops-0.7.4-py3-none-any.whl", hash = "sha256:17f63e2da8651979fdffff7bab2091d04dddde22f7b42f96a6297a135d1de049"},
+    {file = "ptflops-0.7.4.tar.gz", hash = "sha256:660a5f2218294ea035938054d9b3cfa2bff4812dcd7e9469344af5c0945c45e1"},
+]
+
+[package.dependencies]
+torch = ">=2.0"
+
+[package.extras]
+dev = ["flake8 (==3.8.1)", "flake8-import-order (==0.18.1)", "isort (==4.3.21)", "packaging", "pytest (==7.1.2)", "torchvision (>=0.5.0)"]
+
+[[package]]
 name = "ptyprocess"
 version = "0.7.0"
 description = "Run a subprocess in a pseudo terminal"
@@ -3681,4 +3698,4 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "988cd3f6c5c99600606bb864c23c303ad6d4289c6581167e36ddcd17374b04a8"
+content-hash = "74ecc0b367b6d72daea84fc9e2c4f36b211bfcd565d9399ba52ebdf7a071c29f"

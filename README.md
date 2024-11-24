@@ -26,35 +26,37 @@ Depth Estimation is a full-stack application designed to predict depth maps from
 ## Project Structure
 ```
 depth-estimation/
-├── .dockerignore
 ├── build_and_run.sh
 ├── clean_up.sh
 ├── docker-compose.yml
 ├── entrypoint.sh
-├── notebooks/
-│   └── 2024-11-16-depth-anything-launch-and-benchmark.ipynb
+├── notebooks
+│   ├── 2024-11-16-depth-anything-launch-and-benchmark.ipynb
+│   └── 2024-11-23-benchmark-depth-anything-models.ipynb
 ├── poetry.lock
 ├── pyproject.toml
 ├── README.md
 ├── setup.py
-└── src/
-    ├── backend/
-    │   ├── Dockerfile
-    │   ├── __init__.py
-    │   ├── main.py
-    │   └── models/
-    ├── depth_estimation/
-    │   ├── depth_anything_v2/
-    │   └── __init__.py
-    └── frontend/
-        ├── Dockerfile
-        ├── nginx.conf
-        ├── node_modules/
-        ├── package.json
-        ├── package-lock.json
-        ├── public/
-        ├── src/
-        └── tsconfig.json
+└── src
+    ├── backend
+    │   ├── Dockerfile
+    │   ├── __init__.py
+    │   ├── main.py
+    │   └── models
+    ├── depth_estimation
+    │   ├── depth_anything
+    │   ├── depth_dataset.py
+    │   ├── estimation_model.py
+    │   └── __init__.py
+    └── frontend
+        ├── Dockerfile
+        ├── nginx.conf
+        ├── node_modules
+        ├── package.json
+        ├── package-lock.json
+        ├── public
+        ├── src
+        └── tsconfig.json
 ```
 
 ### Directory Overview

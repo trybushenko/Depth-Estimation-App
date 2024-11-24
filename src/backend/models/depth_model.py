@@ -1,7 +1,7 @@
-import cv2
 import os
 from pathlib import Path
 
+import cv2
 import numpy as np
 import torch
 from loguru import logger
@@ -13,7 +13,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 logger.info(f"Using device: {device}")
 
 # Adjust the root path as necessary
-# root_path = Path(__file__).resolve().parents[3]
+root_path = Path(__file__).resolve().parents[3]
 weights_path_dict = {
     "vits": Path(os.getcwd()) / "tmp/model-weights/depth_anything_v2_vits.pth",
     "vitb": Path(os.getcwd()) / "tmp/model-weights/depth_anything_v2_vitb.pth",
@@ -37,10 +37,12 @@ model_configs = {
 
 
 # Load the model at startup
-model = DepthModel('v2_vits',
-                   device='cuda',
-                   model_load_dir=Path(os.getcwd()) / 'tmp/model-weights/', 
-                   grayscale=False)
+model = DepthModel(
+    "v2_vits",
+    device=device,
+    model_load_dir=Path(os.getcwd()) / "tmp/model-weights/",
+    grayscale=False,
+)
 
 
 @torch.no_grad()
