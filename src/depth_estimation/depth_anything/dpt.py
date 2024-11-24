@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -241,3 +242,119 @@ class DepthAnything(nn.Module):
         image = image.to(DEVICE)
 
         return image, (h, w)
+
+
+# class DepthAnything(nn.Module):
+#     def __init__(
+#         self,
+#         encoder="vitl",
+#         features=256,
+#         out_channels=[256, 512, 1024, 1024],
+#         use_bn=False,
+#         use_clstoken=False,
+#     ):
+#         super(DepthAnything, self).__init__()
+
+#         self.intermediate_layer_idx = {
+#             "vits": [2, 5, 8, 11],
+#             "vitb": [2, 5, 8, 11],
+#             "vitl": [4, 11, 17, 23],
+#             "vitg": [9, 19, 29, 39],
+#         }
+
+#         self.encoder = encoder
+#         self.pretrained = DINOv2(model_name=encoder)
+
+#         self.depth_head = DPTHead(
+#             self.pretrained.embed_dim,
+#             features,
+#             use_bn,
+#             out_channels=out_channels,
+#             use_clstoken=use_clstoken,
+#         )
+
+#     def forward(self, x):
+#         patch_h, patch_w = x.shape[-2] // 14, x.shape[-1] // 14
+
+#         features = self.pretrained.get_intermediate_layers(
+#             x, self.intermediate_layer_idx[self.encoder], return_class_token=True
+#         )
+
+#         depth = self.depth_head(features, patch_h, patch_w)
+#         depth = F.relu(depth)
+
+#         return depth.squeeze(1)
+
+#     @torch.no_grad()
+#     def infer_image(self, raw_image, input_size=518):
+#         image, (h, w) = self.image2tensor(raw_image, input_size)
+
+#         depth = self.forward(image)
+
+#         depth = F.interpolate(
+#             depth[:, None], (h, w), mode="bilinear", align_corners=True
+#         )[0, 0]
+
+#         return depth.cpu().numpy()
+    
+#     @torch.no_grad()
+#     def infer_images(self, raw_images, input_size=518):
+#         """
+#         raw_images: List of raw images (numpy arrays)
+#         """
+        
+#         # Set model to evaluation mode
+#         self.eval()
+
+#         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+#         self.to(device)
+
+#         # Preprocess all images and record original sizes
+#         processed_images = []
+#         original_sizes = []
+
+#         transform = Compose(
+#             [
+#                 Resize(
+#                     width=input_size,
+#                     height=input_size,
+#                     resize_target=False,
+#                     keep_aspect_ratio=True,
+#                     ensure_multiple_of=14,
+#                     resize_method="lower_bound",
+#                     image_interpolation_method=cv2.INTER_CUBIC,
+#                 ),
+#                 NormalizeImage(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+#                 PrepareForNet(),
+#             ]
+#         )
+
+#         for img in raw_images:
+#             h, w = img.shape[:2]
+#             original_sizes.append((h, w))
+
+#             image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) / 255.0
+#             image = transform({"image": image})["image"]
+#             image = torch.from_numpy(image).float()
+#             processed_images.append(image)
+
+#         print([image.shape for image in processed_images])
+#         # Stack images into a batch tensor
+#         batch_tensor = torch.stack(processed_images).to(device)  # Shape: [batch_size, 3, H, W]
+
+#         # Forward pass
+#         depth_maps = self.forward(batch_tensor)  # Shape: [batch_size, H, W]
+
+#         # Post-process depth maps
+#         depth_maps_resized = []
+#         for i in range(depth_maps.shape[0]):
+#             depth_map = depth_maps[i].unsqueeze(0).unsqueeze(0)  # Shape: [1, 1, H, W]
+#             depth_map_resized = F.interpolate(
+#                 depth_map,
+#                 size=original_sizes[i],
+#                 mode="bilinear",
+#                 align_corners=True,
+#             ).squeeze(0).squeeze(0)
+#             depth_maps_resized.append(depth_map_resized.cpu().numpy())
+
+#         return depth_maps_resized

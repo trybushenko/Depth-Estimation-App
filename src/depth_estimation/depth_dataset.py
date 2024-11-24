@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import cv2
-from depth_anything.util.transform import NormalizeImage, PrepareForNet, Resize
+from depth_estimation.depth_anything.util.transform import NormalizeImage, PrepareForNet, Resize
 from torch.utils.data import Dataset
 from torchvision.transforms import Compose
 
@@ -24,7 +24,7 @@ class DepthDataset(Dataset):
             self.image_list.extend(Path(self.image_path).glob("*.jpeg"))
 
     def __len__(self):
-        return len(self.image_paths)
+        return len(self.image_list)
 
     def __getitem__(self, idx):
         image_path = self.image_list[idx]
