@@ -4,24 +4,42 @@ services:
   backend:
     build:
       context: .
-      dockerfile: src/backend/Dockerfile
-    image: depth_estimation:v1.0
+      dockerfile: ./src/backend/Dockerfile
     container_name: backend
     ports:
       - "8000:8000"
     networks:
       - app-network
-
+    environment:
+      # Pass the token as an environment variable at runtime
+      HUGGING_FACE_TOKEN: ${HUGGING_FACE_TOKEN}
+      
   frontend:
     build:
-      context: src/frontend
+      context: ./src/frontend
       dockerfile: Dockerfile
-    image: depth_estimation_frontend:v1.0
     container_name: frontend
     ports:
       - "8080:80"
     networks:
       - app-network
+    depends_on:
+      - backend
+
+  # lvlm_service:
+  #   build:
+  #     context: ./src/lvlm_service
+  #     dockerfile: Dockerfile
+  #   container_name: lvlm_service
+  #   ports:
+  #     - "5000:5000"
+  #   networks:
+  #     - app-network
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - capabilities: [gpu]
 
 networks:
   app-network:

@@ -45,6 +45,11 @@ const Navbar: React.FC = () => {
             Camera Stream
           </StyledNavLink>
         </NavItem>
+        <NavItem>
+          <StyledNavLink to="/depthgpt">
+            DepthGPT
+          </StyledNavLink>
+        </NavItem>
         {/* Add more navigation links here if needed */}
       </NavList>
     </Nav>
